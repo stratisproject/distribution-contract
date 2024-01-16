@@ -55,7 +55,7 @@ describe("Distribution contract", function () {
       ).not.to.be.reverted;
   });
 
-  it("Claiming the funds when the specified timestamp has elapsed should succeed", async function () {
+  it("Claiming the funds after the specified timestamp has elapsed should succeed", async function () {
     const [addr1, recipient] = await ethers.getSigners();
 
     const amount = 1_000_000;
@@ -72,5 +72,28 @@ describe("Distribution contract", function () {
 
     await expect(tx).not.to.be.reverted;
     await expect(tx).to.changeEtherBalance(recipient, amount);
+  });
+
+  it("Claiming the funds twice should fail the second time", async function () {
+    const [addr1, recipient] = await ethers.getSigners();
+
+    const amount = 1_000_000;
+    const initialTime = await time.latest();
+    const unlockTime = initialTime + 60;
+
+    const distributionContract = await ethers.deployContract("Distribution", [unlockTime, recipient.address], {
+      value: amount
+    });
+
+    await time.setNextBlockTimestamp(unlockTime + 2_000_000);
+
+    const tx = distributionContract.connect(addr1).claim()
+
+    await expect(tx).not.to.be.reverted;
+    await expect(tx).to.changeEtherBalance(recipient, amount);
+
+    await expect(
+      distributionContract.connect(addr1).claim()
+    ).to.be.revertedWith("No balance to claim");
   });
 });

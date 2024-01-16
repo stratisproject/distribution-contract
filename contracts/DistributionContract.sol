@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >0.7.0 <0.9.0;
+pragma solidity ^0.8.20;
+import "@openzeppelin/contracts/utils/Address.sol";
 
 contract Distribution {
-    uint256 payAfterTimestamp;
-    address payable recipient;
+    uint256 immutable payAfterTimestamp;
+    address payable immutable recipient;
 
     constructor(uint256 _payAfterTimestamp, address payable _recipient) payable {
         require(_payAfterTimestamp >= block.timestamp);
@@ -16,7 +17,10 @@ contract Distribution {
     
     function claim() public {
         require(block.timestamp >= payAfterTimestamp, "Insufficient time elapsed");
+        require(address(this).balance > 0, "No balance to claim");
 
-        recipient.transfer(address(this).balance);
+        // As we are sending the entire balance to a fixed recipient here there should
+        // be no risk of re-entrancy.
+        Address.sendValue(recipient, address(this).balance);
     }
 }
