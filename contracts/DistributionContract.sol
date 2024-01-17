@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.20;
 import "@openzeppelin/contracts/utils/Address.sol";
 
 contract Distribution {
@@ -8,8 +8,8 @@ contract Distribution {
     address payable immutable recipient;
 
     constructor(uint256 _payAfterTimestamp, address payable _recipient) payable {
-        require(_payAfterTimestamp >= block.timestamp);
-        require(address(_recipient) != address(0));
+        require(_payAfterTimestamp >= block.timestamp, "Cannot set timestamp in the past");
+        require(address(_recipient) != address(0), "Need to specify a valid recipient address");
 
         payAfterTimestamp = _payAfterTimestamp;
         recipient = _recipient;
