@@ -7,6 +7,6 @@ https://explorer.stratisevm.com/address/0x5060bDA1501B658c53134DAC118D9a1068A4f3
 
 ## Audit
 
-CertiK: Awaiting publication
+CertiK: https://skynet.certik.com/projects/stratisplatform?auditId=Stratis%20-%20Distribution#code-security
 
 Zokyo: Awaiting publication
